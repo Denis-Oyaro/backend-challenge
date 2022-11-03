@@ -18,7 +18,7 @@ public class HackerNewsClient {
     private final static String topStoriesUri = "https://hacker-news.firebaseio.com/v0/topstories.json";
     private final static String itemUri = "https://hacker-news.firebaseio.com/v0/item/";
 
-    public static CompletableFuture<List<String>> getTopStories() throws InterruptedException, ExecutionException {
+    public CompletableFuture<List<String>> getTopStories() throws InterruptedException, ExecutionException {
         // create http client
         HttpClient client = HttpClient.newHttpClient();
 
@@ -40,7 +40,7 @@ public class HackerNewsClient {
                 });
     }
 
-    public static CompletableFuture<Item> getItem(String itemId) throws InterruptedException, ExecutionException {
+    public CompletableFuture<Item> getItem(String itemId) throws InterruptedException, ExecutionException {
         // create http client
         HttpClient client = HttpClient.newHttpClient();
 

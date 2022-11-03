@@ -12,10 +12,15 @@ public class HackerNewsService {
 
     private static final int TOP_STORIES_COUNT = 30;
     private static final int TOP_COMMENTER_COUNT = 10;
+    private HackerNewsClient hackerNewsClient;
+
+    public HackerNewsService() {
+        this.hackerNewsClient = new HackerNewsClient();
+    }
 
     public void displayTopStories() throws ExecutionException, InterruptedException {
         // Get list of top stories
-        HackerNewsClient.getTopStories()
+        hackerNewsClient.getTopStories()
                 .thenCompose(topStoryIds -> {
                     //System.out.println(Arrays.toString(topStoryIds.toArray(String[]::new)));
 
@@ -25,7 +30,7 @@ public class HackerNewsService {
 
                     List<CompletableFuture<TopStory>> topStoryFutures = topSubStoryIds.stream().map(storyId -> {
                         try {
-                            return HackerNewsClient.getItem(storyId)
+                            return hackerNewsClient.getItem(storyId)
                                             .thenCompose(story -> {
                                                 CompletableFuture<List<String>> commentersFuture = addCommenters(story);
 
@@ -60,13 +65,13 @@ public class HackerNewsService {
     }
 
     // recursive method to add commenters for an item
-    private static CompletableFuture<List<String>> addCommenters(Item item){
+    private CompletableFuture<List<String>> addCommenters(Item item){
         List<String> commentIds = item.getKids();
         if(commentIds != null) {
             List<CompletableFuture<List<String>>> commentersFutureList = commentIds.stream().map(commentId ->
                     {
                         try {
-                            return HackerNewsClient.getItem(commentId).thenCompose((comment)->
+                            return hackerNewsClient.getItem(commentId).thenCompose((comment)->
                                     Objects.requireNonNull(addCommenters(comment)).thenApply(commenters -> {
                                          commenters.add(comment.getBy());
                                  return commenters;
